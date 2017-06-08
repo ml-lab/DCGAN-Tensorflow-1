@@ -39,11 +39,8 @@ class PoseEvalManager(object):
 class Evaler(object):
 
     @staticmethod
-    def get_model_class(model_name):
-        if model_name == 'MLP':
-            from model import Model
-        else:
-            return ValueError(model_name)
+    def get_model_class():
+        from model import Model
         return Model
 
 
@@ -60,14 +57,12 @@ class Evaler(object):
 
         self.dataset = dataset
 
-        check_data_id(dataset, config.data_id)
         _, self.batch = create_input_ops(dataset, self.batch_size,
-                                         data_id=config.data_id,
                                          is_training=False,
                                          shuffle=False)
 
         # --- create model ---
-        Model = self.get_model_class(config.model)
+        Model = self.get_model_class()
         self.model = Model(config)
 
         self.global_step = tf.contrib.framework.get_or_create_global_step(graph=None)
@@ -146,7 +141,7 @@ class Evaler(object):
 
         return step, (_end_time - _start_time), batch_chunk, all_preds, all_targets
 
-        def log_step_message(self, step, step_time, is_train=False):
+    def log_step_message(self, step, step_time, is_train=False):
         if step_time == 0: step_time = 0.001
         log_fn = (is_train and log.info or log.infov)
         log_fn((" [{split_mode:5s} step {step:4d}] " +
@@ -166,7 +161,7 @@ def main():
     parser.add_argument('--checkpoint_path', type=str)
     parser.add_argument('--train_dir', type=str)
     parser.add_argument('--dataset', type=str, default='CIFAR10', choices=['MNIST', 'SVHN', 'CIFAR10'])
-    parser.add_argument('--max_steps', type=int, default=None)
+    parser.add_argument('--max_steps', type=int, default=1)
     config = parser.parse_args()
 
     if config.dataset == 'mnist':
