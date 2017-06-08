@@ -95,6 +95,7 @@ def download_svhn(download_path):
     else:
         os.mkdir(data_dir)
 
+    print('Downloading SVHN')
     data_url = 'http://ufldl.stanford.edu/housenumbers/train_32x32.mat'
     train_image = svhn_loader(data_url, os.path.join(data_dir, 'train_32x32.mat'))
     
